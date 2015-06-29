@@ -11,8 +11,6 @@ import android.widget.TextView;
 import net.juude.droidrest.R;
 
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 import retrofit.Callback;
 import retrofit.RestAdapter;
@@ -85,7 +83,8 @@ public class RetrofitFragment extends Fragment {
                     }
                 });
 
-        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1, null);
+        //ScheduledExecutorService executor = Executors.newScheduledThreadPool(1, null);
 
     }
+
 }

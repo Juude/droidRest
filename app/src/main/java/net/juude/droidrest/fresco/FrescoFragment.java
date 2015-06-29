@@ -21,21 +21,26 @@ import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
 import net.juude.droidrest.R;
+import net.juude.droidrest.RestApplication;
 
 /**
  * Created by juude on 15-6-29.
  */
 public class FrescoFragment extends Fragment{
-    private ImageView mImageView1;
+    private ImageView mPipeImageView;
+    private Bitmap mCopyBitmap;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_fresco, null);
-        mImageView1 = (ImageView) v.findViewById(R.id.image1);
+        mPipeImageView = (ImageView) v.findViewById(R.id.image1);
         fetchImage();
         return v;
     }
 
+    private Bitmap copyBitmap(Bitmap src) {
+        return Bitmap.createScaledBitmap(src, src.getWidth(), src.getHeight(), false);
+    }
 
     private void fetchImage() {
         ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(Uri.parse("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShkbESeC8Ni6J1H-E8dpQxMh4TsyU39fHB_-xFc3vaKjYb8kxQRA"))
@@ -47,9 +52,10 @@ public class FrescoFragment extends Fragment{
             @Override
             protected void onNewResultImpl(final @Nullable Bitmap bitmap) {
                 getActivity().runOnUiThread(new Runnable() {
-                    @Override
                     public void run() {
-                        mImageView1.setImageBitmap(bitmap);
+                        mCopyBitmap = copyBitmap(bitmap);
+                        mPipeImageView.setImageBitmap(mCopyBitmap);
+                        RestApplication.getRefWatcher().watch(mCopyBitmap);
                     }
                 });
             }
@@ -61,6 +67,16 @@ public class FrescoFragment extends Fragment{
         }, AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(mCopyBitmap != null) {
+            mCopyBitmap.recycle();
+            mCopyBitmap = null;
+        }
+        mPipeImageView.setImageDrawable(null);
+    }
 
 }
 
