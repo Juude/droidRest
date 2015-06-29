@@ -31,6 +31,9 @@ public class DataSourcePipelineFragment extends Fragment{
     private static final String TAG = "DataSourcePipelineFragment";
     private ImageView mPipeImageView;
     private CloseableImage mCloseableImage;
+    private String mUrl;
+    private ImagePipeline mImagePipeline;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -46,17 +49,19 @@ public class DataSourcePipelineFragment extends Fragment{
     }
 
     private void fetchImage() {
-        ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(Uri.parse("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShkbESeC8Ni6J1H-E8dpQxMh4TsyU39fHB_-xFc3vaKjYb8kxQRA"))
+        mUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShkbESeC8Ni6J1H-E8dpQxMh4TsyU39fHB_-xFc3vaKjYb8kxQRA";
+        ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(Uri.parse(mUrl))
                 .build();
-        ImagePipeline imagePipeline = Fresco.getImagePipeline();
-//        DataSource<CloseableReference<CloseableImage>> cacheImage = imagePipeline.fetchImageFromBitmapCache(imageRequest, new Object());
-//        if(cacheImage!= null && cacheImage.getResult()!= null && (mCloseableImage = cacheImage.getResult().get()) != null) {
-//            showCloseableImage();
-//            return;
-//        }
+        mImagePipeline = Fresco.getImagePipeline();
+        DataSource<CloseableReference<CloseableImage>> cacheImage = mImagePipeline.fetchImageFromBitmapCache(imageRequest, this);
+        if(cacheImage!= null && cacheImage.getResult()!= null && (mCloseableImage = cacheImage.getResult().get()) != null) {
+            showCloseableImage();
+            Log.d(TAG, "get from cache");
+            return;
+        }
 
         DataSource<CloseableReference<CloseableImage>>
-                dataSource = imagePipeline.fetchDecodedImage(imageRequest, new Object());
+                dataSource = mImagePipeline.fetchDecodedImage(imageRequest, this);
         dataSource.subscribe(new BaseDataSubscriber<CloseableReference<CloseableImage>>() {
             @Override
             protected void onNewResultImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
@@ -71,7 +76,6 @@ public class DataSourcePipelineFragment extends Fragment{
             @Override
             protected void onFailureImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
                 Log.d(TAG, "onFailureImpl");
-
             }
         }, AsyncTask.THREAD_POOL_EXECUTOR);
     }
@@ -90,11 +94,14 @@ public class DataSourcePipelineFragment extends Fragment{
 
     @Override
     public void onStop() {
-        super.onStop();
+        super.onDestroy();
         //mPipeImageView.setImageDrawable(null);
-//        if(mCloseableImage != null && !mCloseableImage.isClosed()) {
-//            mCloseableImage.close();
-//        }
+        mImagePipeline.evictFromMemoryCache(Uri.parse(mUrl));
+
+        if(mCloseableImage != null && !mCloseableImage.isClosed()) {
+            mCloseableImage.close();
+            mCloseableImage = null;
+        }
     }
 
 }

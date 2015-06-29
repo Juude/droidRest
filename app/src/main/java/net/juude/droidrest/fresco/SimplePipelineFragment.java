@@ -83,5 +83,6 @@ public class SimplePipelineFragment extends Fragment{
         mPipeImageView.setImageDrawable(null);
     }
 
+
 }
 
