@@ -2,6 +2,8 @@ package net.juude.droidrest;
 
 import android.app.Application;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+
 import net.juude.droidrest.volley.ApiManager;
 
 /**
@@ -13,5 +15,6 @@ public class RestApplication extends Application{
     public void onCreate() {
         super.onCreate();
         ApiManager.onApplicationCreate(this);
+        Fresco.initialize(getApplicationContext());
     }
 }

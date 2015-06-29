@@ -13,6 +13,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import net.juude.droidrest.fresco.FrescoFragment;
 import net.juude.droidrest.retrofit.RetrofitFragment;
 import net.juude.droidrest.volley.VolleyFragment;
 
@@ -35,7 +36,8 @@ public class MainActivity extends AppCompatActivity {
     static {
         sFragmentList = new Class<?>[] {
                 VolleyFragment.class,
-                RetrofitFragment.class
+                RetrofitFragment.class,
+                FrescoFragment.class
         };
     }
 
