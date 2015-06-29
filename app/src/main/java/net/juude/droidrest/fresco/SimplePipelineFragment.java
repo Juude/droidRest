@@ -26,7 +26,7 @@ import net.juude.droidrest.RestApplication;
 /**
  * Created by juude on 15-6-29.
  */
-public class FrescoFragment extends Fragment{
+public class SimplePipelineFragment extends Fragment{
     private ImageView mPipeImageView;
     private Bitmap mCopyBitmap;
     @Nullable
@@ -34,12 +34,17 @@ public class FrescoFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_fresco, null);
         mPipeImageView = (ImageView) v.findViewById(R.id.image1);
-        fetchImage();
         return v;
     }
 
     private Bitmap copyBitmap(Bitmap src) {
         return Bitmap.createScaledBitmap(src, src.getWidth(), src.getHeight(), false);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        fetchImage();
     }
 
     private void fetchImage() {
