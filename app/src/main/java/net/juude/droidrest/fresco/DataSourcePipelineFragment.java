@@ -49,7 +49,7 @@ public class DataSourcePipelineFragment extends Fragment{
     }
 
     private void fetchImage() {
-        mUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShkbESeC8Ni6J1H-E8dpQxMh4TsyU39fHB_-xFc3vaKjYb8kxQRA";
+        mUrl = "http://img21.mtime.cn/mg/2010/05/24/133403.69590387.jpg";
         ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(Uri.parse(mUrl))
                 .build();
         mImagePipeline = Fresco.getImagePipeline();
@@ -62,6 +62,13 @@ public class DataSourcePipelineFragment extends Fragment{
 
         DataSource<CloseableReference<CloseableImage>>
                 dataSource = mImagePipeline.fetchDecodedImage(imageRequest, this);
+        CloseableReference<CloseableImage> closeableReference = dataSource.getResult();
+        Log.d(TAG, "closeableReference " + closeableReference);
+//        if(closeableReference != null) {
+//            mCloseableImage = closeableReference.get();
+//            Log.d(TAG, "mCloseableImage " + mCloseableImage);
+//            showCloseableImage();
+//        }
         dataSource.subscribe(new BaseDataSubscriber<CloseableReference<CloseableImage>>() {
             @Override
             protected void onNewResultImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
@@ -96,7 +103,7 @@ public class DataSourcePipelineFragment extends Fragment{
     public void onStop() {
         super.onDestroy();
         //mPipeImageView.setImageDrawable(null);
-        mImagePipeline.evictFromMemoryCache(Uri.parse(mUrl));
+        //mImagePipeline.evictFromMemoryCache(Uri.parse(mUrl));
 
         if(mCloseableImage != null && !mCloseableImage.isClosed()) {
             mCloseableImage.close();

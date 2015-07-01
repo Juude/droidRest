@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import net.juude.droidrest.fresco.DataSourcePipelineFragment;
 import net.juude.droidrest.fresco.SimplePipelineFragment;
+import net.juude.droidrest.multithread.ConcurrentFragment;
 import net.juude.droidrest.retrofit.RetrofitFragment;
 import net.juude.droidrest.volley.VolleyFragment;
 
@@ -39,7 +40,8 @@ public class MainActivity extends AppCompatActivity {
                 VolleyFragment.class,
                 RetrofitFragment.class,
                 SimplePipelineFragment.class,
-                DataSourcePipelineFragment.class
+                DataSourcePipelineFragment.class,
+                ConcurrentFragment.class
         };
     }
 
