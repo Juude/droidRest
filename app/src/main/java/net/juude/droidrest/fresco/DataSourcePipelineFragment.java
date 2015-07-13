@@ -33,6 +33,7 @@ public class DataSourcePipelineFragment extends Fragment{
     private CloseableImage mCloseableImage;
     private String mUrl;
     private ImagePipeline mImagePipeline;
+    private CloseableReference<CloseableImage> mCloseableReference;
 
     @Nullable
     @Override
@@ -53,12 +54,12 @@ public class DataSourcePipelineFragment extends Fragment{
         ImageRequest imageRequest = ImageRequestBuilder.newBuilderWithSource(Uri.parse(mUrl))
                 .build();
         mImagePipeline = Fresco.getImagePipeline();
-        DataSource<CloseableReference<CloseableImage>> cacheImage = mImagePipeline.fetchImageFromBitmapCache(imageRequest, this);
-        if(cacheImage!= null && cacheImage.getResult()!= null && (mCloseableImage = cacheImage.getResult().get()) != null) {
-            showCloseableImage();
-            Log.d(TAG, "get from cache");
-            return;
-        }
+//        DataSource<CloseableReference<CloseableImage>> cacheImage = mImagePipeline.fetchImageFromBitmapCache(imageRequest, this);
+//        if(cacheImage!= null && cacheImage.getResult()!= null && (mCloseableImage = cacheImage.getResult().get()) != null) {
+//            showCloseableImage();
+//            Log.d(TAG, "get from cache");
+//            return;
+//        }
 
         DataSource<CloseableReference<CloseableImage>>
                 dataSource = mImagePipeline.fetchDecodedImage(imageRequest, this);
@@ -72,7 +73,8 @@ public class DataSourcePipelineFragment extends Fragment{
         dataSource.subscribe(new BaseDataSubscriber<CloseableReference<CloseableImage>>() {
             @Override
             protected void onNewResultImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
-                final CloseableImage closeableImage = dataSource.getResult().get();
+                mCloseableReference = dataSource.getResult();
+                final CloseableImage closeableImage = mCloseableReference.get();
                 mCloseableImage = closeableImage;
                 RestApplication.getRefWatcher().watch(mCloseableImage);
                 showCloseableImage();
@@ -104,11 +106,14 @@ public class DataSourcePipelineFragment extends Fragment{
         super.onDestroy();
         //mPipeImageView.setImageDrawable(null);
         //mImagePipeline.evictFromMemoryCache(Uri.parse(mUrl));
-
+//
         if(mCloseableImage != null && !mCloseableImage.isClosed()) {
             mCloseableImage.close();
             mCloseableImage = null;
         }
+//        if(mCloseableReference != null) {
+//            mCloseableReference.close();
+//        }
     }
 
 }
